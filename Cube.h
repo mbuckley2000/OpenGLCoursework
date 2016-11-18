@@ -12,11 +12,6 @@
 class Cube : public Object {
 public:
     Cube();
-    void setSize(float size);
-private:
-    void updateVertices();
-    float size;
-    bool generated;
 };
 
 

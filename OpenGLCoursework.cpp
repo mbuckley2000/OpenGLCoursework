@@ -216,8 +216,8 @@ int main(int argc, char** argv)
 
     //Lighting
     light  = PointLight();
-    light.position.y = 10;
-    light.intensity = 100;
+    light.position.y = 2;
+    light.intensity = 10;
 
     //Camera
     camera.center = {0, 0, 0};
@@ -237,7 +237,7 @@ int main(int argc, char** argv)
     //Scene
     scene.camera = &camera;
     scene.light = &light;
-    scene.objectInstances.push_back(&cubeInst);
+    scene.objectInstances.push_back(&meshInst);
 
     // Callback functions
 	glutDisplayFunc(display);

@@ -21,12 +21,13 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
     //Diffuse
     glm::vec3 aoi = light->position - facePos;
     float diffuseBrightness = light->intensity * glm::dot(faceNorm, glm::normalize(aoi)) / pow(glm::length(aoi), 2);
+    if (diffuseBrightness < 0) diffuseBrightness = 0;
 
     //Specular
     //http://learnopengl.com/#!Lighting/Basic-Lighting
 
     //Emmissive
-    float emmissiveBrightness = 1;
+    float emmissiveBrightness = 0.05;
 
     //Calculate face colour
     float brightness = diffuseBrightness + emmissiveBrightness;
