@@ -22,6 +22,7 @@ std::vector<glm::vec3> vertices;
 float a = 1;
 float b = 0;
 float camRotX = 0, camRotY = 0;
+float camDist = 5;
 
 PointLight light;
 
@@ -91,7 +92,9 @@ void display(void)
 	b += 1;
     light.position.x = 3*cos(a);
     light.position.z = 3*sin(a);
-    gluLookAt(5*cos(camRotX), 5*sin(camRotY), 5*sin(camRotX),
+
+    if (camDist < 1) camDist = 1;
+    gluLookAt(camDist*cos(camRotX), camDist*sin(camRotY), camDist*sin(camRotX),
               0.0f, 0.0f, 0.0f,
               0.0f, 1.0f, 0.0f);
 
@@ -252,6 +255,8 @@ void keyboard(unsigned char key, int x, int y)
 		case 'v': rendermode = 'v'; break;  // vertices
 		case 'e': rendermode = 'e'; break;  // edges
 		case 'f': rendermode = 'f'; break;  // faces
+        case 'w': camDist -= 0.1; break;  // Zoom in
+        case 's': camDist += 0.1; break;  // Zoom out
 
 		default:
 			break;
@@ -293,6 +298,7 @@ void mouseMove(int x, int y)
     camRotX += (x-oldX)*0.01;
     camRotY += (y-oldY)*0.01;
     if (camRotY > 1.5) camRotY = 1.5;
+    if (camRotY < -1.5) camRotY = -1.5;
     oldX = x;
     oldY = y;
 }
@@ -324,8 +330,8 @@ int main(int argc, char** argv)
 
     //Lighting
     light  = PointLight();
-    light.position.y = 1;
-    light.intensity = 5;
+    light.position.y = 10;
+    light.intensity = 80;
 
     // Callback functions
 	glutDisplayFunc(display);

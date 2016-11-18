@@ -6,17 +6,17 @@
 #define OPENGLCOURSEWORK_CUBE_H
 
 #include <vector>
-#include "Vertex.h"
+#include <glm/vec3.hpp>
+#include "Object.h"
 
-class Cube {
+class Cube : public Object {
 public:
-    Cube(double xPos, double yPos, double zPos, double size);
-
-
+    Cube();
+    void setSize(float size);
 private:
-    std::vector<float> position;
-    std::vector<float> angle;
-    double size;
+    void updateVertices();
+    float size;
+    bool generated;
 };
 
 
