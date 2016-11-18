@@ -1,0 +1,42 @@
+v  0.0  0.0  1.0
+v  0.0  1.0  0.0
+v  0.0  1.0  1.0
+v  1.0  0.0  0.0
+v  1.0  0.0  1.0
+v  1.0  1.0  0.0
+v  1.0  1.0  1.0
+
+//Face 1 + opposite
+			glVertex3f(1.0f, 1.0f, 1.0f);
+			glVertex3f(-1.0f, 1.0f, 1.0f);
+			glVertex3f(-1.0f, -1.0f, 1.0f);
+			glVertex3f(1.0f, -1.0f, 1.0f);
+
+            glVertex3f(1.0f, 1.0f, -1.0f);
+            glVertex3f(-1.0f, 1.0f, -1.0f);
+            glVertex3f(-1.0f, -1.0f, -1.0f);
+            glVertex3f(1.0f, -1.0f, -1.0f);
+
+            //Face 2 + opposite
+            glColor3f(0.0f, 1.0f, 0.0f);
+            glVertex3f(1.0f, 1.0f, 1.0f);
+            glVertex3f(1.0f, -1.0f, 1.0f);
+            glVertex3f(1.0f, -1.0f, -1.0f);
+            glVertex3f(1.0f, 1.0f, -1.0f);
+
+            glVertex3f(-1.0f, 1.0f, 1.0f);
+            glVertex3f(-1.0f, -1.0f, 1.0f);
+            glVertex3f(-1.0f, -1.0f, -1.0f);
+            glVertex3f(-1.0f, 1.0f, -1.0f);
+
+            //Face 3 + opposite
+            glColor3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(1.0f, 1.0f, 1.0f);
+            glVertex3f(-1.0f, 1.0f, 1.0f);
+            glVertex3f(-1.0f, 1.0f, -1.0f);
+            glVertex3f(1.0f, 1.0f, -1.0f);
+
+            glVertex3f(1.0f, -1.0f, 1.0f);
+            glVertex3f(-1.0f, -1.0f, 1.0f);
+            glVertex3f(-1.0f, -1.0f, -1.0f);
+            glVertex3f(1.0f, -1.0f, -1.0f);
