@@ -9,7 +9,6 @@
 #include "Scene.h"
 
 void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
-    std::cout << "Drawing triangle" << std::endl;
     //Calculate face position
     glm::vec3 facePos;
     for (glm::vec3 v : vertices) {
@@ -27,7 +26,7 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
     //http://learnopengl.com/#!Lighting/Basic-Lighting
 
     //Emmissive
-    float emmissiveBrightness = 0.05;
+    float emmissiveBrightness = 1;
 
     //Calculate face colour
     float brightness = diffuseBrightness + emmissiveBrightness;
@@ -43,7 +42,6 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
 
 void Scene::drawInstance(ObjectInstance *instance) {
     glBegin(GL_TRIANGLES);
-    //std::cout << "Displaying object" << std::endl;
     //Iterate over faces
     for (std::array<int, 3> face : instance->object->faces) {
         //iterate over vertices

@@ -15,6 +15,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Mesh.h"
+#include "Cube.h"
 
 // Global variable for current rendering mode.
 char rendermode;
@@ -216,21 +217,27 @@ int main(int argc, char** argv)
     //Lighting
     light  = PointLight();
     light.position.y = 10;
-    light.intensity = 80;
+    light.intensity = 100;
 
     //Camera
     camera.center = {0, 0, 0};
     camera.up = {0, 1, 0};
 
-    //Object
+    //Bunny
     Mesh mesh = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
     ObjectInstance meshInst = ObjectInstance(&mesh);
     meshInst.scale = 0.5;
+    mesh.material.emissiveColour = {0.2, 0.2, 1};
+
+    //Cube
+    Cube cube;
+    ObjectInstance cubeInst = ObjectInstance(&cube);
+
 
     //Scene
     scene.camera = &camera;
     scene.light = &light;
-    scene.objectInstances.push_back(&meshInst);
+    scene.objectInstances.push_back(&cubeInst);
 
     // Callback functions
 	glutDisplayFunc(display);

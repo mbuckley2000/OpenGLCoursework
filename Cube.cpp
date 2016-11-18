@@ -22,16 +22,16 @@ void Cube::updateVertices() {
         }
         faces[0] = {0, 1, 2};
         faces[1] = {1, 2, 3};
-        faces[2] = {2, 3, 4};
-        faces[3] = {3, 4, 5};
-        faces[4] = {4, 5, 6};
-        faces[5] = {5, 6, 7};
-        faces[6] = {6, 7, 0};
-        faces[7] = {7, 0, 1};
-        faces[8] = {0, 1, 2};
-        faces[9] = {1, 2, 3};
-        faces[10] = {2, 3, 4};
-        faces[11] = {3, 4, 5};
+        faces[2] = {2, 3, 6};
+        faces[3] = {3, 6, 7};
+        faces[4] = {6, 7, 4};
+        faces[5] = {7, 4, 5};
+        faces[6] = {4, 5, 1};
+        faces[7] = {4, 1, 0};
+        faces[8] = {5, 1, 3};
+        faces[9] = {5, 3, 7};
+        faces[10] = {2, 0, 4};
+        faces[11] = {2, 6, 4};
     }
 
     vertices[0] = {size/2, size/2, size/2};
