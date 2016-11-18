@@ -10,9 +10,11 @@
 #endif
 
 #include <math.h>
-#include <stdlib.h>
 #include "objloader.hpp"
 #include "PointLight.h"
+#include "Camera.h"
+#include "Scene.h"
+#include "Mesh.h"
 
 // Global variable for current rendering mode.
 char rendermode;
@@ -20,11 +22,12 @@ std::vector<std::array<float, 3>> oldVertices;
 std::vector<std::array<int, 3>> faces;
 std::vector<glm::vec3> vertices;
 float a = 1;
-float b = 0;
 float camRotX = 0, camRotY = 0;
 float camDist = 5;
 
 PointLight light;
+Camera camera;
+Scene scene;
 
 // Scene initialisation.
 void InitGL(GLvoid)
@@ -45,137 +48,28 @@ void idle(void)
 }
 
 
-void drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
-    //Calculate face position
-    glm::vec3 facePos;
-    for (glm::vec3 v : vertices) {
-        facePos += v;
-    }
-    facePos /= 3;
-
-    glm::vec3 faceNorm = glm::normalize(glm::cross(vertices[2]-vertices[0], vertices[2]-vertices[1]));
-
-    //Diffuse
-    glm::vec3 aoi = light.position - facePos;
-    float diffuseBrightness = light.intensity * glm::dot(faceNorm, glm::normalize(aoi)) / pow(glm::length(aoi), 2);
-
-    //Specular
-    //http://learnopengl.com/#!Lighting/Basic-Lighting
-
-    //Emmissive
-    float emmissiveBrightness = 0.05;
-
-    //Calculate face colour
-    float brightness = diffuseBrightness + emmissiveBrightness;
-    if (brightness > 1) brightness = 1;
-    colour *= light.colour;
-    glColor3f(colour.r*brightness, colour.g*brightness, colour.b*brightness);
-
-    //Draw face
-    for (glm::vec3 v : vertices) {
-        glVertex3f(v.x, v.y, v.z);
-    }
-}
-
-
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
-	// Set the camera.
-	//gluLookAt(5.0f, 5.0f, 10.0f,
-	//	0.0f, 0.0f, 0.0f,
-	//	0.0f, 1.0f, 0.0f);
 
+    //Rotate light
     a += 0.01;
-	b += 1;
     light.position.x = 3*cos(a);
     light.position.z = 3*sin(a);
 
+    //Control camera with mouse
     if (camDist < 1) camDist = 1;
-    gluLookAt(camDist*cos(camRotX), camDist*sin(camRotY), camDist*sin(camRotX),
-              0.0f, 0.0f, 0.0f,
-              0.0f, 1.0f, 0.0f);
+    camera.position = {camDist * cos(camRotX), camDist * sin(camRotY), camDist * sin(camRotX)};
 
-	// TO DO: Draw a full cube rather than a square.
 
 	// Different render modes.
 	switch(rendermode) {
 
 		case 'f': // to display faces
 		{
-
-/*
-			glRotatef(b, 1.0f, 1.0f, 1.0f);
-			glBegin(GL_QUADS);
-            //Face 1 + opposite
-			glColor3f(1.0f, 0.0f, 0.0f);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glVertex3f(-1.0f, -1.0f, 1.0f);
-			glVertex3f(1.0f, -1.0f, 1.0f);
-
-            glVertex3f(1.0f, 1.0f, -1.0f);
-            glVertex3f(-1.0f, 1.0f, -1.0f);
-            glVertex3f(-1.0f, -1.0f, -1.0f);
-            glVertex3f(1.0f, -1.0f, -1.0f);
-
-            //Face 2 + opposite
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(1.0f, 1.0f, 1.0f);
-            glVertex3f(1.0f, -1.0f, 1.0f);
-            glVertex3f(1.0f, -1.0f, -1.0f);
-            glVertex3f(1.0f, 1.0f, -1.0f);
-
-            glVertex3f(-1.0f, 1.0f, 1.0f);
-            glVertex3f(-1.0f, -1.0f, 1.0f);
-            glVertex3f(-1.0f, -1.0f, -1.0f);
-            glVertex3f(-1.0f, 1.0f, -1.0f);
-
-            //Face 3 + opposite
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(1.0f, 1.0f, 1.0f);
-            glVertex3f(-1.0f, 1.0f, 1.0f);
-            glVertex3f(-1.0f, 1.0f, -1.0f);
-            glVertex3f(1.0f, 1.0f, -1.0f);
-
-            glVertex3f(1.0f, -1.0f, 1.0f);
-            glVertex3f(-1.0f, -1.0f, 1.0f);
-            glVertex3f(-1.0f, -1.0f, -1.0f);
-            glVertex3f(1.0f, -1.0f, -1.0f);
-
-			glEnd();
-
-            glRotatef(-b, 1.0f, 1.0f, 1.0f);
-            //Draw axes
-            glBegin(GL_LINES);
-            glColor3f(1.0f, 0.0f, 0.0f);
-            glVertex3f(0.0f, 0.0f, 0.0f);
-            glVertex3f(10.0f, 0.0f, 0.0f);
-
-            glColor3f(0.0f, 1.0f, 0.0f);
-            glVertex3f(0.0f, 0.0f, 0.0f);
-            glVertex3f(0.0f, 10.0f, 0.0f);
-
-            glColor3f(0.0f, 0.0f, 1.0f);
-            glVertex3f(0.0f, 0.0f, 0.0f);
-            glVertex3f(0.0f, 0.0f, 10.0f);
-
-            glEnd();
-            */
-
-
-            //Draw loaded model
-
-            glBegin(GL_TRIANGLES);
-            //Iterate over faces
-            for (std::array<int, 3> face : faces) {
-                //iterate over vertices
-                drawTriangle({vertices[face[0] - 1], vertices[face[1] - 1], vertices[face[2] - 1]}, {1, 1, 1});
-            }
-            glEnd();
-
+            scene.render();
 			break;
 		}
 
@@ -297,8 +191,8 @@ void mouseMove(int x, int y)
 {
     camRotX += (x-oldX)*0.01;
     camRotY += (y-oldY)*0.01;
-    if (camRotY > 1.5) camRotY = 1.5;
-    if (camRotY < -1.5) camRotY = -1.5;
+    if (camRotY > 1.5) camRotY = 1.5f;
+    if (camRotY < -1.5) camRotY = -1.5f;
     oldX = x;
     oldY = y;
 }
@@ -319,19 +213,24 @@ int main(int argc, char** argv)
 	InitGL();
 	rendermode = 'f';
 
-    load_obj("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj", oldVertices, faces);
-    for (std::array<float, 3> vertex : oldVertices) {
-        glm::vec3 v;
-        v.x = vertex[0];
-        v.y = vertex[1];
-        v.z = vertex[2];
-        vertices.push_back(v);
-    }
-
     //Lighting
     light  = PointLight();
     light.position.y = 10;
     light.intensity = 80;
+
+    //Camera
+    camera.center = {0, 0, 0};
+    camera.up = {0, 1, 0};
+
+    //Object
+    Mesh mesh = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
+    ObjectInstance meshInst = ObjectInstance(&mesh);
+    meshInst.scale = 0.5;
+
+    //Scene
+    scene.camera = &camera;
+    scene.light = &light;
+    scene.objectInstances.push_back(&meshInst);
 
     // Callback functions
 	glutDisplayFunc(display);

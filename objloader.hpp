@@ -12,7 +12,7 @@
 // Originally writen by Yongliang Yang using GLM,
 // modified by Andrew Chinery to use Eigen, and
 // modified by Christian Richardt to use plain C++11.
-inline bool load_obj(const char* path, std::vector<std::array<float, 3>>& vertices, std::vector<std::array<int, 3>>& vertexIndices)
+inline bool load_obj(const char *path, std::vector<glm::vec3> &vertices, std::vector<std::array<int, 3>> &faces)
 {
 	printf("Loading OBJ file '%s' ... ", path);
 
@@ -23,6 +23,12 @@ inline bool load_obj(const char* path, std::vector<std::array<float, 3>>& vertic
 		return false;
 	}
 
+    /*
+     *  std::vector<std::array<int, 3>> faces;
+        std::vector<glm::vec3> vertices;
+     */
+
+
 	while (true)
 	{
 		char lineHeader[128];
@@ -32,17 +38,19 @@ inline bool load_obj(const char* path, std::vector<std::array<float, 3>>& vertic
 		if (res == EOF) break;  // EOF = End Of File. Quit the loop.
 
 		// Parse the line.
-		if (strcmp(lineHeader, "v") == 0)
+        if (strcmp(lineHeader, "v") == 0) //It's a vertex
 		{
-			std::array<float, 3> vertex;
-			fscanf(file, "%f %f %f\n", &vertex[0], &vertex[1], &vertex[2]);
+            glm::vec3 vertex;
+            fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);   //&vertex[0] etc
 			vertices.push_back(vertex);
-		}
-		else if (strcmp(lineHeader, "f") == 0)
+		} else if (strcmp(lineHeader, "f") == 0) //It's a face
 		{
-			std::array<int, 3> vertexIndex;
-			fscanf(file, "%i %i %i\n", &vertexIndex[0], &vertexIndex[1], &vertexIndex[2]);
-			vertexIndices.push_back(vertexIndex);
+            std::array<int, 3> face;
+            fscanf(file, "%i %i %i\n", &face[0], &face[1], &face[2]);
+            face[0]--;
+            face[1]--;
+            face[2]--; //Adjust to make index start at 0
+            faces.push_back(face);
 		}
 		else
 		{
@@ -51,7 +59,7 @@ inline bool load_obj(const char* path, std::vector<std::array<float, 3>>& vertic
 			fgets(ignored, 1024, file);
 		}
 	}
+    printf("Done.\n");
 
-	printf("Done.\n");
 	return true;
 }

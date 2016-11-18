@@ -10,6 +10,8 @@
 
 class Mesh : public Object {
 public:
+    Mesh(const char *path);
+
     void loadFromFile(const char* path);
 };
 

@@ -9,13 +9,14 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <array>
+#include "Material.h"
 
 class Object {
-protected:
+public:
     double scale;
     std::vector<std::array<int, 3>> faces;
     std::vector<glm::vec3> vertices;
-    glm::vec3 colour;
+    Material material;
 };
 
 
