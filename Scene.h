@@ -22,7 +22,7 @@ public:
     char renderMode;
 
 private:
-    void drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour);
+    void drawTriangle(int v1, int v2, int v3, ObjectInstance *instance);
 
     void drawInstance(ObjectInstance *instance);
 };

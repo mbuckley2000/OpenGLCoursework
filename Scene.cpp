@@ -8,23 +8,33 @@
 #include <iostream>
 #include "Scene.h"
 
-void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
+void Scene::drawTriangle(int v1, int v2, int v3, ObjectInstance *instance) {
     //Calculate face position
     glm::vec3 facePos;
-    for (glm::vec3 v : vertices) {
-        facePos += v;
-    }
+    facePos = instance->object->vertices[v1] + instance->object->vertices[v2] + instance->object->vertices[v3];
     facePos /= 3;
 
-    glm::vec3 faceNorm = glm::normalize(glm::cross(vertices[2] - vertices[0], vertices[2] - vertices[1]));
+    glm::vec3 faceNorm = glm::normalize(glm::cross(instance->object->vertices[v3] - instance->object->vertices[v1],
+                                                   instance->object->vertices[v3] - instance->object->vertices[v2]));
 
-    //glNormal3f(faceNorm.x, faceNorm.y, faceNorm.z); //GL lighting
+    glNormal3f(faceNorm.x, faceNorm.y, faceNorm.z); //GL lighting
 
-    colour *= light->colour;
+
+    if (instance->object->uvs.size() == instance->object->vertices.size())
+        glTexCoord2f(instance->object->uvs[v1].x, instance->object->uvs[v1].y);
+    glVertex3f(instance->object->vertices[v1].x, instance->object->vertices[v1].y, instance->object->vertices[v1].z);
+    if (instance->object->uvs.size() == instance->object->vertices.size())
+        glTexCoord2f(instance->object->uvs[v2].x, instance->object->uvs[v2].y);
+    glVertex3f(instance->object->vertices[v2].x, instance->object->vertices[v2].y, instance->object->vertices[v2].z);
+    if (instance->object->uvs.size() == instance->object->vertices.size())
+        glTexCoord2f(instance->object->uvs[v3].x, instance->object->uvs[v3].y);
+    glVertex3f(instance->object->vertices[v3].x, instance->object->vertices[v3].y, instance->object->vertices[v3].z);
+
+    //colour *= light->colour;
 
     //Draw face + calculate lighting per vertex
-    for (glm::vec3 v : vertices) {
-
+    //for (glm::vec3 v : vertices) {
+/*
         //Diffuse
         glm::vec3 aoi = light->position - v;
 
@@ -45,9 +55,9 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
         float brightness = diffuseBrightness + emmissiveBrightness;
         if (brightness > 1) brightness = 1;
         glColor3f(colour.r * brightness, colour.g * brightness, colour.b * brightness);
-        glVertex3f(v.x, v.y, v.z);
-    }
+        */
 }
+
 
 void Scene::drawInstance(ObjectInstance *instance) {
     if (renderMode == 'e') glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -59,14 +69,12 @@ void Scene::drawInstance(ObjectInstance *instance) {
     }
 
     //glColor3f(instance->object->material.emissiveColour.x, instance->object->material.emissiveColour.y, instance->object->material.emissiveColour.z); //For gl lighting
+    glBindTexture(GL_TEXTURE_2D, instance->texture);
 
     //Iterate over faces
     for (std::array<int, 3> face : instance->object->faces) {
         //iterate over vertices
-        drawTriangle({instance->object->vertices[face[0]] * instance->scale + instance->position,
-                      instance->object->vertices[face[1]] * instance->scale + instance->position,
-                      instance->object->vertices[face[2]] * instance->scale + instance->position},
-                     instance->object->material.emissiveColour);
+        drawTriangle(face[0], face[1], face[2], instance);
     }
     glEnd();
 }

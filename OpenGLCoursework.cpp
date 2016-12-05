@@ -41,9 +41,10 @@ void InitGL(GLvoid)
 	glEnable(GL_DEPTH_TEST);               // Enables depth testing.
 	glDepthFunc(GL_LEQUAL);                // The type of depth testing to do.
 	glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_TEXTURE_2D);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-    /* For gl lighting
+    // For gl lighting
     GLfloat pos[] = {10, 10, 10, 1};
     GLfloat color[] = {1, 1, 1, 1};
     GLfloat cutoff[] = {100};
@@ -54,7 +55,7 @@ void InitGL(GLvoid)
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-     */
+
 }
 
 
@@ -265,6 +266,7 @@ int main(int argc, char** argv)
     meshInst.position = {0, 0, 0};
     mesh.material.emissiveColour = {255, 192, 203};
     mesh.material.emissiveColour = glm::normalize(mesh.material.emissiveColour);
+    meshInst.texture = loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/wood.bmp");
 
     //Cube
     Cube cube;
@@ -279,7 +281,7 @@ int main(int argc, char** argv)
     //Scene
     scene.camera = &camera;
     scene.light = &light;
-    scene.objectInstances.push_back(&meshInst);
+    //scene.objectInstances.push_back(&meshInst);
     scene.objectInstances.push_back(&cubeInst);
     scene.objectInstances.push_back(&cub2);
 

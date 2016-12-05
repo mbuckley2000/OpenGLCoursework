@@ -9,6 +9,7 @@
 #include <glm/vec3.hpp>
 #include <vector>
 #include <array>
+#include <GL/gl.h>
 #include "Material.h"
 
 class Object {
@@ -17,8 +18,8 @@ public:
     std::vector<std::array<int, 3>> faces;
     std::vector<glm::vec3> vertices;
     Material material;
+    std::vector<glm::vec2> uvs;
 
-    void center();
 };
 
 

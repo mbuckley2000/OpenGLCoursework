@@ -30,7 +30,7 @@ endif(NOT OPENGL_FOUND)
 
 set(SOURCE_FILES
         OpenGLCoursework.cpp
-        objloader.hpp Cube.cpp Cube.h ShaderLoader.h PointLight.cpp PointLight.h Object.cpp Object.h Mesh.cpp Mesh.h Scene.cpp Scene.h ObjectInstance.cpp ObjectInstance.h Material.cpp Material.h Camera.cpp Camera.h)
+        objloader.hpp Cube.cpp Cube.h ShaderLoader.h PointLight.cpp PointLight.h Object.cpp Object.h Mesh.cpp Mesh.h Scene.cpp Scene.h ObjectInstance.cpp ObjectInstance.h Material.cpp Material.h Camera.cpp Camera.h LoadTexture.h)
 
 add_executable(OpenGLCoursework ${SOURCE_FILES})
 

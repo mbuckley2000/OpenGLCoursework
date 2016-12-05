@@ -2,12 +2,15 @@
 // Created by matt on 15/11/16.
 //
 
+#include <glm/vec2.hpp>
 #include "Cube.h"
 
 Cube::Cube() {
     for (int i = 0; i < 8; i++) {
         glm::vec3 v;
+        glm::vec2 uv;
         vertices.push_back(v);
+        uvs.push_back(uv);
     }
     for (int i = 0; i < 12; i++) {
         std::array<int, 3> a;
@@ -35,4 +38,21 @@ Cube::Cube() {
     vertices[5] = {-1, 1, -1};
     vertices[6] = {1, -1, -1};
     vertices[7] = {-1, -1, -1};
+
+    uvs[0] = {1, 1};
+    uvs[1] = {0, 1};
+    uvs[2] = {1, 0};
+    uvs[3] = {1, 1};
+    uvs[4] = {0, 1};
+    uvs[5] = {1, 0};
+    uvs[6] = {1, 1};
+    uvs[7] = {0, 1};
+
+
+    glGenTextures(1, &kanye);
+    glGenTextures(1, &steel);
+    glGenTextures(1, &wood);
+    glGenTextures(1, &brick);
+    glGenTextures(1, &water);
+    glGenTextures(1, &mud);
 }

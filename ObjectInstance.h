@@ -13,10 +13,15 @@ class ObjectInstance {
 public:
     ObjectInstance(Object *object);
 
+    GLuint texture;
+
+
     glm::vec3 position;
     glm::vec3 angle;
     float scale;
     Object *object;
+
+    void center();
 };
 
 
