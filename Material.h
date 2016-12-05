@@ -13,6 +13,7 @@ public:
     Material();
 
     glm::vec3 emissiveColour;
+    float reflectivity;
 };
 
 

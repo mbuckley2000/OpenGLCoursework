@@ -14,9 +14,12 @@ class Scene {
 public:
     void render();
 
+    Scene();
     std::vector<ObjectInstance *> objectInstances;
     PointLight *light;
     Camera *camera;
+
+    char renderMode;
 
 private:
     void drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour);

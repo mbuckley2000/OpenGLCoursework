@@ -6,4 +6,5 @@
 
 Material::Material() {
     emissiveColour = {1, 1, 1};
+    reflectivity = 1;
 }

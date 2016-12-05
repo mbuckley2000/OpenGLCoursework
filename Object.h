@@ -17,6 +17,8 @@ public:
     std::vector<std::array<int, 3>> faces;
     std::vector<glm::vec3> vertices;
     Material material;
+
+    void center();
 };
 
 

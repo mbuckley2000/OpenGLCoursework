@@ -25,7 +25,9 @@ std::vector<glm::vec3> vertices;
 float a = 1;
 float camRotX = 0, camRotY = 0;
 float camDist = 5;
+float theta = 0, phi = 3.14f / 2;
 
+ObjectInstance *cube2;
 PointLight light;
 Camera camera;
 Scene scene;
@@ -57,13 +59,14 @@ void display(void)
 
     //Rotate light
     a += 0.01;
-    light.position.x = 3*cos(a);
-    light.position.z = 3*sin(a);
+    light.position.x = 20 * cos(a);
+    light.position.z = 20 * sin(a);
+    cube2->position.x = light.position.x;
+    cube2->position.z = light.position.z;
 
     //Control camera with mouse
     if (camDist < 1) camDist = 1;
-    camera.position = {camDist * cos(camRotX), camDist * sin(camRotY), camDist * sin(camRotX)};
-
+    //camera.position = {camDist * cos(camRotX) * sin(camRotY), camDist * (cos(camRotY)), camDist * sin(camRotX) * sin(camRotY)};
 
 	// Different render modes.
 	switch(rendermode) {
@@ -150,8 +153,20 @@ void keyboard(unsigned char key, int x, int y)
 		case 'v': rendermode = 'v'; break;  // vertices
 		case 'e': rendermode = 'e'; break;  // edges
 		case 'f': rendermode = 'f'; break;  // faces
-        case 'w': camDist -= 0.1; break;  // Zoom in
-        case 's': camDist += 0.1; break;  // Zoom out
+            //case 'w': camDist -= 0.1; break;  // Zoom in
+            //case 's': camDist += 0.1; break;  // Zoom out
+        case 'w':
+            camera.position += camera.direction * 0.1f;
+            break;  // Move forward
+        case 's':
+            camera.position -= camera.direction * 0.1f;
+            break;  // Move backward
+        case 'a':
+            camera.position -= camera.right * 0.1f;
+            break;  // Move left
+        case 'd':
+            camera.position += camera.right * 0.1f;
+            break;  // Move right
 
 		default:
 			break;
@@ -179,21 +194,26 @@ void arrow_keys(int a_keys, int x, int y)
 	}
 }
 
-
 // Handling mouse button event.
 void mouseButton(int button, int state, int x, int y)
 {
 }
 
-
 int oldX = -1, oldY = -1;
 // Handling mouse move events.
 void mouseMove(int x, int y)
 {
-    camRotX += (x-oldX)*0.01;
-    camRotY += (y-oldY)*0.01;
-    if (camRotY > 1.5) camRotY = 1.5f;
-    if (camRotY < -1.5) camRotY = -1.5f;
+    //camRotX += (x-oldX)*0.01;
+    //camRotY += (y-oldY)*0.01;
+    theta += (x - oldX) * 0.005;
+    phi += (y - oldY) * 0.005;
+    if (phi > 3.14 / 2) phi = 3.14 / 2;
+    if (phi < 0.01) phi = 0.01;
+    camera.direction = {sin(phi) * cos(theta), cos(phi), sin(phi) * sin(theta)};
+    camera.right = -glm::cross(camera.up, camera.direction);
+    //if (camRotY > -0.3) camRotY = -0.3f;
+    //if (camRotY < -2.8) camRotY = -2.8f;
+
     oldX = x;
     oldY = y;
 }
@@ -217,27 +237,37 @@ int main(int argc, char** argv)
     //Lighting
     light  = PointLight();
     light.position.y = 2;
-    light.intensity = 10;
+    light.intensity = 300;
+    light.colour = {1, 0.5, 0.5};
 
     //Camera
     camera.center = {0, 0, 0};
     camera.up = {0, 1, 0};
+    camera.position = {0, 0, 0};
 
     //Bunny
     Mesh mesh = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
     ObjectInstance meshInst = ObjectInstance(&mesh);
-    meshInst.scale = 0.5;
-    mesh.material.emissiveColour = {0.2, 0.2, 1};
+    meshInst.scale = 1;
+    meshInst.position = {0, 0, 0};
+    mesh.material.emissiveColour = {255, 192, 203};
+    mesh.material.emissiveColour = glm::normalize(mesh.material.emissiveColour);
 
     //Cube
     Cube cube;
     ObjectInstance cubeInst = ObjectInstance(&cube);
+    cube.material.emissiveColour = {1, 0, 0};
+    cube.scale = 0.3;
 
+    ObjectInstance cub2 = ObjectInstance(&cube);
+    cube2 = &cub2;
 
     //Scene
     scene.camera = &camera;
     scene.light = &light;
     scene.objectInstances.push_back(&meshInst);
+    scene.objectInstances.push_back(&cub2);
+
 
     // Callback functions
 	glutDisplayFunc(display);
@@ -245,7 +275,7 @@ int main(int argc, char** argv)
 	glutKeyboardFunc(keyboard);
 	glutSpecialFunc(arrow_keys);  // For special keys
 	glutMouseFunc(mouseButton);
-	glutMotionFunc(mouseMove);
+    glutPassiveMotionFunc(mouseMove);
 	glutIdleFunc(idle);
 
 	glutMainLoop();
