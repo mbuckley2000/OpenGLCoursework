@@ -17,27 +17,14 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
     facePos /= 3;
 
     glm::vec3 faceNorm = glm::normalize(glm::cross(vertices[2] - vertices[0], vertices[2] - vertices[1]));
-/* PER FACE
-    //Diffuse
-    glm::vec3 aoi = light->position - facePos;
-    float diffuseBrightness = light->intensity * glm::dot(faceNorm, glm::normalize(aoi)) / pow(glm::length(aoi), 2);
-    if (diffuseBrightness < 0) diffuseBrightness = 0;
 
-    //Specular
-    //http://learnopengl.com/#!Lighting/Basic-Lighting
+    //glNormal3f(faceNorm.x, faceNorm.y, faceNorm.z); //GL lighting
 
-    //Emmissive
-    float emmissiveBrightness = 0.05;
-
-    //Calculate face colour
-    float brightness = diffuseBrightness + emmissiveBrightness;
-    if (brightness > 1) brightness = 1;
     colour *= light->colour;
-    glColor3f(colour.r * brightness, colour.g * brightness, colour.b * brightness);
-*/
 
     //Draw face + calculate lighting per vertex
     for (glm::vec3 v : vertices) {
+
         //Diffuse
         glm::vec3 aoi = light->position - v;
 
@@ -46,12 +33,10 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
 
         //Specular
         //http://learnopengl.com/#!Lighting/Basic-Lighting
-        glm::vec3 aoiCam = camera->position - v;
+        //glm::vec3 aoiCam = camera->position - v;
 
-        float spec = 100 / (0.0001 + pow(glm::length(glm::dot(aoi, aoiCam)), 2) * (pow(glm::length(aoi), 2) +
-                                                                                   pow(glm::length(aoiCam),
-                                                                                       2))); //TODO Take reflectivity into account
-        if (spec < 0) spec = 0;
+        //float spec = 100 / (0.0001 + pow(glm::length(glm::dot(aoi, aoiCam)), 2) * (pow(glm::length(aoi), 2) + pow(glm::length(aoiCam),2))); //TODO Take reflectivity into account
+        //if (spec < 0) spec = 0;
 
         //Emmissive
         float emmissiveBrightness = 0.05;
@@ -59,9 +44,7 @@ void Scene::drawTriangle(std::array<glm::vec3, 3> vertices, glm::vec3 colour) {
         //Calculate face colour
         float brightness = diffuseBrightness + emmissiveBrightness;
         if (brightness > 1) brightness = 1;
-        colour *= light->colour;
         glColor3f(colour.r * brightness, colour.g * brightness, colour.b * brightness);
-
         glVertex3f(v.x, v.y, v.z);
     }
 }
@@ -74,6 +57,9 @@ void Scene::drawInstance(ObjectInstance *instance) {
     } else {
         glBegin(GL_TRIANGLES);
     }
+
+    //glColor3f(instance->object->material.emissiveColour.x, instance->object->material.emissiveColour.y, instance->object->material.emissiveColour.z); //For gl lighting
+
     //Iterate over faces
     for (std::array<int, 3> face : instance->object->faces) {
         //iterate over vertices

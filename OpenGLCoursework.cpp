@@ -41,7 +41,20 @@ void InitGL(GLvoid)
 	glEnable(GL_DEPTH_TEST);               // Enables depth testing.
 	glDepthFunc(GL_LEQUAL);                // The type of depth testing to do.
 	glEnable(GL_COLOR_MATERIAL);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+    /* For gl lighting
+    GLfloat pos[] = {10, 10, 10, 1};
+    GLfloat color[] = {1, 1, 1, 1};
+    GLfloat cutoff[] = {100};
+
+    glLightfv(GL_LIGHT0, GL_POSITION, pos);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
+    glLightfv(GL_LIGHT0, GL_SPOT_CUTOFF, cutoff);
+
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+     */
 }
 
 
@@ -257,7 +270,8 @@ int main(int argc, char** argv)
     Cube cube;
     ObjectInstance cubeInst = ObjectInstance(&cube);
     cube.material.emissiveColour = {1, 0, 0};
-    cube.scale = 0.3;
+    cube.scale = 0.6;
+    cubeInst.position = {10, 0, 0};
 
     ObjectInstance cub2 = ObjectInstance(&cube);
     cube2 = &cub2;
@@ -266,6 +280,7 @@ int main(int argc, char** argv)
     scene.camera = &camera;
     scene.light = &light;
     scene.objectInstances.push_back(&meshInst);
+    scene.objectInstances.push_back(&cubeInst);
     scene.objectInstances.push_back(&cub2);
 
 
