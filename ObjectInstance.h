@@ -15,13 +15,18 @@ public:
 
     GLuint texture;
 
+    bool textureLoaded;
 
     glm::vec3 position;
     glm::vec3 angle;
     float scale;
     Object *object;
 
+    bool visible;
+
     void center();
+
+    void loadTexture(const char *filename);
 };
 
 

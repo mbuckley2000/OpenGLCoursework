@@ -19,43 +19,25 @@ void Scene::drawTriangle(int v1, int v2, int v3, ObjectInstance *instance) {
 
     glNormal3f(faceNorm.x, faceNorm.y, faceNorm.z); //GL lighting
 
+    float scale = instance->scale;
+    glm::vec3 pos = instance->position;
 
-    if (instance->object->uvs.size() == instance->object->vertices.size())
+    if (instance->textureLoaded)
+        if (instance->object->uvs.size() == instance->object->vertices.size())
         glTexCoord2f(instance->object->uvs[v1].x, instance->object->uvs[v1].y);
-    glVertex3f(instance->object->vertices[v1].x, instance->object->vertices[v1].y, instance->object->vertices[v1].z);
-    if (instance->object->uvs.size() == instance->object->vertices.size())
+    glVertex3f(instance->object->vertices[v1].x * scale + pos.x, instance->object->vertices[v1].y * scale + pos.y,
+               instance->object->vertices[v1].z * scale + pos.z);
+    if (instance->textureLoaded)
+        if (instance->object->uvs.size() == instance->object->vertices.size())
         glTexCoord2f(instance->object->uvs[v2].x, instance->object->uvs[v2].y);
-    glVertex3f(instance->object->vertices[v2].x, instance->object->vertices[v2].y, instance->object->vertices[v2].z);
-    if (instance->object->uvs.size() == instance->object->vertices.size())
+    glVertex3f(instance->object->vertices[v2].x * scale + pos.x, instance->object->vertices[v2].y * scale + pos.y,
+               instance->object->vertices[v2].z * scale + pos.z);
+    if (instance->textureLoaded)
+        if (instance->object->uvs.size() == instance->object->vertices.size())
         glTexCoord2f(instance->object->uvs[v3].x, instance->object->uvs[v3].y);
-    glVertex3f(instance->object->vertices[v3].x, instance->object->vertices[v3].y, instance->object->vertices[v3].z);
+    glVertex3f(instance->object->vertices[v3].x * scale + pos.x, instance->object->vertices[v3].y * scale + pos.y,
+               instance->object->vertices[v3].z * scale + pos.z);
 
-    //colour *= light->colour;
-
-    //Draw face + calculate lighting per vertex
-    //for (glm::vec3 v : vertices) {
-/*
-        //Diffuse
-        glm::vec3 aoi = light->position - v;
-
-        float diffuseBrightness = light->intensity * glm::dot(faceNorm, glm::normalize(aoi)) / pow(glm::length(aoi), 2);
-        if (diffuseBrightness < 0) diffuseBrightness = 0;
-
-        //Specular
-        //http://learnopengl.com/#!Lighting/Basic-Lighting
-        //glm::vec3 aoiCam = camera->position - v;
-
-        //float spec = 100 / (0.0001 + pow(glm::length(glm::dot(aoi, aoiCam)), 2) * (pow(glm::length(aoi), 2) + pow(glm::length(aoiCam),2))); //TODO Take reflectivity into account
-        //if (spec < 0) spec = 0;
-
-        //Emmissive
-        float emmissiveBrightness = 0.05;
-
-        //Calculate face colour
-        float brightness = diffuseBrightness + emmissiveBrightness;
-        if (brightness > 1) brightness = 1;
-        glColor3f(colour.r * brightness, colour.g * brightness, colour.b * brightness);
-        */
 }
 
 
@@ -68,8 +50,11 @@ void Scene::drawInstance(ObjectInstance *instance) {
         glBegin(GL_TRIANGLES);
     }
 
-    //glColor3f(instance->object->material.emissiveColour.x, instance->object->material.emissiveColour.y, instance->object->material.emissiveColour.z); //For gl lighting
-    glBindTexture(GL_TEXTURE_2D, instance->texture);
+    if (instance->textureLoaded) {
+        glBindTexture(GL_TEXTURE_2D, instance->texture);
+    } else {
+        glColor3f(1, 1, 1);
+    }
 
     //Iterate over faces
     for (std::array<int, 3> face : instance->object->faces) {
@@ -77,16 +62,25 @@ void Scene::drawInstance(ObjectInstance *instance) {
         drawTriangle(face[0], face[1], face[2], instance);
     }
     glEnd();
+
+    if (renderMode == 'v') glPointSize(5);
 }
 
 void Scene::render() {
-    //gluLookAt(camera->position.x, camera->position.y, camera->position.z, camera->center.x, camera->center.y, camera->center.z, camera->up.x, camera->up.y, camera->up.z);
+    //GL Light
+    GLfloat pos[] = {light->position.x, light->position.y, light->position.z, 1};
+    GLfloat color[] = {light->colour.r, light->colour.g, light->colour.b, 1};
+    GLfloat cutoff[] = {100};
+    glLightfv(GL_LIGHT0, GL_POSITION, pos);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
+    glLightfv(GL_LIGHT0, GL_SPOT_CUTOFF, cutoff);
+
     glm::vec3 lookAt = camera->position + camera->direction;
     gluLookAt(camera->position.x, camera->position.y, camera->position.z, lookAt.x, lookAt.y, lookAt.z, camera->up.x,
               camera->up.y, camera->up.z);
 
     for (ObjectInstance *instance : objectInstances) {
-        drawInstance(instance);
+        if (instance->visible) drawInstance(instance);
     }
 }
 

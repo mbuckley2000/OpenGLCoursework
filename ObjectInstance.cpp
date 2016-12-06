@@ -3,17 +3,20 @@
 //
 
 #include "ObjectInstance.h"
+#include "LoadTexture.h"
 
 ObjectInstance::ObjectInstance(Object *object) {
     this->object = object;
     scale = 1;
     position = {0, 0, 0};
     angle = {0, 0, 0};
+    center();
+    visible = true;
+    textureLoaded = false;
 }
 
 
 void ObjectInstance::center() {
-    //TODO Scale and position object to fit inside 2x2x2 cube around origin
     //Mark Scheme: Bunny + screwdriver: 20% Correctly scaled and translated to fit inside the cube.
     glm::vec3 min = {0, 0, 0}, max = {0, 0, 0};
     for (glm::vec3 v : object->vertices) {
@@ -31,4 +34,14 @@ void ObjectInstance::center() {
     if (size.z > largestAxis) largestAxis = size.z;
 
     scale = 2 / largestAxis;
+
+    position = -min * scale;
+    position.x -= 1;
+    position.y -= 1;
+    position.z -= 1;
+}
+
+void ObjectInstance::loadTexture(const char *filename) {
+    texture = loadBMP(filename);
+    textureLoaded = true;
 }

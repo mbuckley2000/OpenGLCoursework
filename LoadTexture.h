@@ -12,7 +12,7 @@
 #include <malloc.h>
 #include <GL/glu.h>
 
-inline GLuint loadTexture(const char *filename) {
+inline GLuint loadBMP(const char *filename) {
 
     GLuint texture;
 

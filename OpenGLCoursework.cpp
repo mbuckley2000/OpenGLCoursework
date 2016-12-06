@@ -27,7 +27,6 @@ float camRotX = 0, camRotY = 0;
 float camDist = 5;
 float theta = 0, phi = 3.14f / 2;
 
-ObjectInstance *cube2;
 PointLight light;
 Camera camera;
 Scene scene;
@@ -43,15 +42,6 @@ void InitGL(GLvoid)
 	glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_TEXTURE_2D);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-    // For gl lighting
-    GLfloat pos[] = {10, 10, 10, 1};
-    GLfloat color[] = {1, 1, 1, 1};
-    GLfloat cutoff[] = {100};
-
-    glLightfv(GL_LIGHT0, GL_POSITION, pos);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, color);
-    glLightfv(GL_LIGHT0, GL_SPOT_CUTOFF, cutoff);
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
@@ -75,8 +65,6 @@ void display(void)
     a += 0.01;
     light.position.x = 20 * cos(a);
     light.position.z = 20 * sin(a);
-    cube2->position.x = light.position.x;
-    cube2->position.z = light.position.z;
 
     //Control camera with mouse
     if (camDist < 1) camDist = 1;
@@ -167,8 +155,6 @@ void keyboard(unsigned char key, int x, int y)
 		case 'v': rendermode = 'v'; break;  // vertices
 		case 'e': rendermode = 'e'; break;  // edges
 		case 'f': rendermode = 'f'; break;  // faces
-            //case 'w': camDist -= 0.1; break;  // Zoom in
-            //case 's': camDist += 0.1; break;  // Zoom out
         case 'w':
             camera.position += camera.direction * 0.1f;
             break;  // Move forward
@@ -217,17 +203,12 @@ int oldX = -1, oldY = -1;
 // Handling mouse move events.
 void mouseMove(int x, int y)
 {
-    //camRotX += (x-oldX)*0.01;
-    //camRotY += (y-oldY)*0.01;
     theta += (x - oldX) * 0.005;
     phi += (y - oldY) * 0.005;
-    if (phi > 3.14 / 2) phi = 3.14 / 2;
+    if (phi > 3.14) phi = 3.14;
     if (phi < 0.01) phi = 0.01;
     camera.direction = {sin(phi) * cos(theta), cos(phi), sin(phi) * sin(theta)};
     camera.right = -glm::cross(camera.up, camera.direction);
-    //if (camRotY > -0.3) camRotY = -0.3f;
-    //if (camRotY < -2.8) camRotY = -2.8f;
-
     oldX = x;
     oldY = y;
 }
@@ -249,7 +230,7 @@ int main(int argc, char** argv)
 	rendermode = 'f';
 
     //Lighting
-    light  = PointLight();
+    light = PointLight();
     light.position.y = 2;
     light.intensity = 300;
     light.colour = {1, 0.5, 0.5};
@@ -260,31 +241,25 @@ int main(int argc, char** argv)
     camera.position = {0, 0, 0};
 
     //Bunny
-    Mesh mesh = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
-    ObjectInstance meshInst = ObjectInstance(&mesh);
-    meshInst.scale = 1;
-    meshInst.position = {0, 0, 0};
-    mesh.material.emissiveColour = {255, 192, 203};
-    mesh.material.emissiveColour = glm::normalize(mesh.material.emissiveColour);
-    meshInst.texture = loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/wood.bmp");
+    Mesh bunny = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
+    ObjectInstance bunnyInst = ObjectInstance(&bunny);
+    bunnyInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/water.bmp");
+
+    //Screwdriver
+    Mesh screwdriver = Mesh("/home/matt/ClionProjects/OpenGLCoursework/screwdriver.obj");
+    ObjectInstance screwdriverInst = ObjectInstance(&screwdriver);
+    screwdriverInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/wood.bmp");
 
     //Cube
     Cube cube;
     ObjectInstance cubeInst = ObjectInstance(&cube);
-    cube.material.emissiveColour = {1, 0, 0};
-    cube.scale = 0.6;
-    cubeInst.position = {10, 0, 0};
-
-    ObjectInstance cub2 = ObjectInstance(&cube);
-    cube2 = &cub2;
+    cubeInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/wood.bmp");
 
     //Scene
     scene.camera = &camera;
     scene.light = &light;
-    //scene.objectInstances.push_back(&meshInst);
+    scene.objectInstances.push_back(&screwdriverInst);
     scene.objectInstances.push_back(&cubeInst);
-    scene.objectInstances.push_back(&cub2);
-
 
     // Callback functions
 	glutDisplayFunc(display);
