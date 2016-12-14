@@ -18,14 +18,13 @@
 #include "Cube.h"
 
 // Global variable for current rendering mode.
-char rendermode;
-std::vector<std::array<float, 3>> oldVertices;
-std::vector<std::array<int, 3>> faces;
-std::vector<glm::vec3> vertices;
-float a = 1;
-float camRotX = 0, camRotY = 0;
-float camDist = 5;
+float lightAngle = 1;
 float theta = 0, phi = 3.14f / 2;
+
+ObjectInstance *bunnyInst;
+ObjectInstance *cubeInstPtr;
+ObjectInstance *SI;
+
 
 PointLight light;
 Camera camera;
@@ -62,60 +61,14 @@ void display(void)
 	glLoadIdentity();
 
     //Rotate light
-    a += 0.01;
-    light.position.x = 20 * cos(a);
-    light.position.z = 20 * sin(a);
+    lightAngle += 0.01;
+    cubeInstPtr->angle.x -= 0.1;
+    bunnyInst->angle.y -= 0.1;
+    SI->angle.z -= 0.1;
+    light.position.x = 10 * sin(lightAngle);
+    light.position.z = 10 * cos(lightAngle);
 
-    //Control camera with mouse
-    if (camDist < 1) camDist = 1;
-    //camera.position = {camDist * cos(camRotX) * sin(camRotY), camDist * (cos(camRotY)), camDist * sin(camRotX) * sin(camRotY)};
-
-	// Different render modes.
-	switch(rendermode) {
-
-		case 'f': // to display faces
-		{
-            scene.render();
-			break;
-		}
-
-		case 'v': // to display points
-		{
-			glBegin(GL_POINTS);
-			glColor3f(0.0f, 1.0f, 0.0f);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glVertex3f(-1.0f, -1.0f, 1.0f);
-			glVertex3f(1.0f, -1.0f, 1.0f);
-			glEnd();
-
-			glPointSize(5);
-			break;
-		}
-
-		case 'e': // to display edges
-		{
-			glBegin(GL_LINES);
-			glColor3f(0.0f, 0.0f, 1.0f);
-
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glVertex3f(-1.0f, -1.0f, 1.0f);
-
-			glVertex3f(-1.0f, 1.0f, 1.0f);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-
-			glVertex3f(-1.0f, -1.0f, 1.0f);
-			glVertex3f(1.0f, -1.0f, 1.0f);
-
-			glVertex3f(1.0f, -1.0f, 1.0f);
-			glVertex3f(1.0f, 1.0f, 1.0f);
-
-			glEnd();
-			break;
-		}
-	}
-
-	// TO DO: Draw Cartesian coordinate system as lines.
+    scene.render();
 
 	glutSwapBuffers();
 }
@@ -151,10 +104,6 @@ void keyboard(unsigned char key, int x, int y)
 			exit(0);
 			break;
 
-			// Switch render mode.
-		case 'v': rendermode = 'v'; break;  // vertices
-		case 'e': rendermode = 'e'; break;  // edges
-		case 'f': rendermode = 'f'; break;  // faces
         case 'w':
             camera.position += camera.direction * 0.1f;
             break;  // Move forward
@@ -162,11 +111,26 @@ void keyboard(unsigned char key, int x, int y)
             camera.position -= camera.direction * 0.1f;
             break;  // Move backward
         case 'a':
-            camera.position -= camera.right * 0.1f;
+            camera.position += camera.right * 0.1f;
             break;  // Move left
         case 'd':
-            camera.position += camera.right * 0.1f;
+            camera.position -= camera.right * 0.1f;
             break;  // Move right
+        case '1':
+            cubeInstPtr->visible = true;
+            bunnyInst->visible = false;
+            SI->visible = false;
+            break;
+        case '2':
+            cubeInstPtr->visible = false;
+            bunnyInst->visible = true;
+            SI->visible = false;
+            break;
+        case '3':
+            cubeInstPtr->visible = false;
+            bunnyInst->visible = false;
+            SI->visible = true;
+            break;
 
 		default:
 			break;
@@ -208,7 +172,8 @@ void mouseMove(int x, int y)
     if (phi > 3.14) phi = 3.14;
     if (phi < 0.01) phi = 0.01;
     camera.direction = {sin(phi) * cos(theta), cos(phi), sin(phi) * sin(theta)};
-    camera.right = -glm::cross(camera.up, camera.direction);
+    camera.direction = glm::normalize(camera.direction);
+    camera.right = glm::normalize(glm::cross(camera.up, camera.direction));
     oldX = x;
     oldY = y;
 }
@@ -227,7 +192,6 @@ int main(int argc, char** argv)
 	glutCreateWindow("CM20219 OpenGL Coursework");
 	glutFullScreen();  // Uncomment to start in full screen.
 	InitGL();
-	rendermode = 'f';
 
     //Lighting
     light = PointLight();
@@ -240,25 +204,37 @@ int main(int argc, char** argv)
     camera.up = {0, 1, 0};
     camera.position = {0, 0, 0};
 
+
     //Bunny
     Mesh bunny = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
-    ObjectInstance bunnyInst = ObjectInstance(&bunny);
-    bunnyInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/water.bmp");
+    ObjectInstance BI = ObjectInstance(&bunny);
+    bunnyInst = &BI;
+    BI.renderMode = 'f';
 
     //Screwdriver
     Mesh screwdriver = Mesh("/home/matt/ClionProjects/OpenGLCoursework/screwdriver.obj");
     ObjectInstance screwdriverInst = ObjectInstance(&screwdriver);
-    screwdriverInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/wood.bmp");
+    screwdriverInst.center();
+    screwdriverInst.renderMode = 'f';
+    SI = &screwdriverInst;
 
     //Cube
     Cube cube;
     ObjectInstance cubeInst = ObjectInstance(&cube);
-    cubeInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/wood.bmp");
+    cubeInstPtr = &cubeInst;
+    cubeInst.renderMode = 'f';
+    cubeInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/cube.bmp");
+
+
+    cubeInstPtr->visible = true;
+    bunnyInst->visible = false;
+    SI->visible = false;
 
     //Scene
     scene.camera = &camera;
     scene.light = &light;
     scene.objectInstances.push_back(&screwdriverInst);
+    scene.objectInstances.push_back(&BI);
     scene.objectInstances.push_back(&cubeInst);
 
     // Callback functions

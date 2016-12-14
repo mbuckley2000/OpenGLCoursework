@@ -30,29 +30,32 @@ Cube::Cube() {
     faces[10] = {2, 0, 4};
     faces[11] = {2, 6, 4};
 
-    vertices[0] = {1, 1, 1};
-    vertices[1] = {-1, 1, 1};
-    vertices[2] = {1, -1, 1};
-    vertices[3] = {-1, -1, 1};
-    vertices[4] = {1, 1, -1};
-    vertices[5] = {-1, 1, -1};
-    vertices[6] = {1, -1, -1};
-    vertices[7] = {-1, -1, -1};
+    vertices[4] = {1, 1, -1};   //Front Top Left
+    vertices[0] = {1, 1, 1};    //Front Top Right
+    vertices[6] = {1, -1, -1};  //Front Bottom Left
+    vertices[2] = {1, -1, 1};   //Front Bottom Right
+    vertices[1] = {-1, 1, 1}; //Back Top Right
+    vertices[3] = {-1, -1, 1}; //Back Bottom Right
+    vertices[5] = {-1, 1, -1}; //Back Top Left
+    vertices[7] = {-1, -1, -1}; //Back Bottom Left
 
+    uvs[0] = {0.5, 2 / 3};
+    uvs[1] = {0.75, 2 / 3};
+    uvs[2] = {0.5, 1 / 3};
+    uvs[3] = {0.75, 1 / 3};
+    uvs[4] = {0.25, 2 / 3};
+    uvs[5] = {1, 2 / 3};
+    uvs[6] = {0.25, 1 / 3};
+    uvs[7] = {1, 2 / 3};
+/*
     uvs[0] = {1, 1};
     uvs[1] = {0, 1};
     uvs[2] = {1, 0};
-    uvs[3] = {1, 1};
+    uvs[3] = {0, 1};
     uvs[4] = {0, 1};
-    uvs[5] = {1, 0};
-    uvs[6] = {1, 1};
-    uvs[7] = {0, 1};
-
-
-    glGenTextures(1, &kanye);
-    glGenTextures(1, &steel);
-    glGenTextures(1, &wood);
-    glGenTextures(1, &brick);
-    glGenTextures(1, &water);
-    glGenTextures(1, &mud);
+    uvs[5] = {1, 1};
+    uvs[6] = {0, 0};
+    uvs[7] = {1, 0};
+*/
+    calculateNormals();
 }

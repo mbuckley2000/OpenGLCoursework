@@ -13,16 +13,21 @@ class ObjectInstance {
 public:
     ObjectInstance(Object *object);
 
-    GLuint texture;
+    std::vector<GLuint> textures;
 
     bool textureLoaded;
 
     glm::vec3 position;
     glm::vec3 angle;
+
+    int lastTex;
+
     float scale;
     Object *object;
 
     bool visible;
+
+    char renderMode;
 
     void center();
 

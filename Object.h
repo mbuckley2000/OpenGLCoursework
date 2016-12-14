@@ -19,7 +19,9 @@ public:
     std::vector<glm::vec3> vertices;
     Material material;
     std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> vertexNormals;
 
+    void calculateNormals();
 };
 
 

@@ -13,13 +13,6 @@
 class Cube : public Object {
 public:
     Cube();
-
-    GLuint kanye = loadBMP("textures/kanye.bmp");
-    GLuint steel = loadBMP("textures/steel.bmp");
-    GLuint wood = loadBMP("textures/wood.bmp");
-    GLuint water = loadBMP("textures/water.bmp");
-    GLuint mud = loadBMP("textures/mud.bmp");
-    GLuint brick = loadBMP("textures/brick.bmp");
 };
 
 

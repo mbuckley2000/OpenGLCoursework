@@ -14,7 +14,6 @@ class Scene {
 public:
     void render();
 
-    Scene();
     std::vector<ObjectInstance *> objectInstances;
     PointLight *light;
     Camera *camera;
