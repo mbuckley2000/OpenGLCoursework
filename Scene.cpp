@@ -79,22 +79,25 @@ void Scene::drawCube(ObjectInstance *instance) {
 }
 
 void Scene::drawInstance(ObjectInstance *instance) {
+    //Get instance scale and position
     float scale = instance->scale;
     glm::vec3 pos = instance->position;
 
     //Iterate over faces
     for (int fn = 0; fn < instance->object->faces.size(); fn++) {
+        //Iterate over vertices (triangle or quad)
         for (int i = 0; i < instance->object->vn; i++) {
             int vi = instance->object->faces[fn][i];
             glm::vec3 v = instance->object->vertices[vi];
 
+            //Set texture coord
             if (instance->textureLoaded) {
-                //if (instance->object->uvs.size() == instance->object->faces.size()) {
                 glTexCoord2f(instance->object->uvs[fn][i].x, instance->object->uvs[fn][i].y);
-                //}
             }
+            //Set vertex normal
             glNormal3f(instance->object->vertexNormals[vi].x, instance->object->vertexNormals[vi].y,
                        instance->object->vertexNormals[vi].z); //GL lighting
+            //Set vertex position (object vertex position * scale + instance position)
             glVertex3f(v.x * scale + pos.x, v.y * scale + pos.y, v.z * scale + pos.z);
         }
     }
@@ -127,7 +130,6 @@ void Scene::render() {
     glVertex3f(0, 0, 20);
 
     glEnd();
-
 
     //Draw all object instances
     for (ObjectInstance *instance : objectInstances) {
@@ -174,6 +176,6 @@ void Scene::render() {
         }
     }
 
-    glPointSize(3);
-    glLineWidth(3);
+    glPointSize(5);
+    glLineWidth(5);
 }
