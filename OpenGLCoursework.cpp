@@ -158,19 +158,24 @@ void keyboard(unsigned char key, int x, int y)
             cubeInstPtr->textureLoaded = !cubeInstPtr->textureLoaded;
             break;
         case 'x':
-            rotDir = {0.1, 0, 0};
+            rotDir = {0.7, 0, 0};
             break;
         case 'y':
-            rotDir = {0, 0.1, 0};
+            rotDir = {0, 0.7, 0};
             break;
         case 'z':
-            rotDir = {0, 0, 0.1};
+            rotDir = {0, 0, 0.7};
             break;
         case 'r':
             cubeInstPtr->angle = {0, 0, 0};
             SI->angle = {0, 0, 0};
             bunnyInst->angle = {0, 0, 0};
             rotDir = {0, 0, 0};
+            break;
+        case 'c':
+            SI->center();
+            bunnyInst->center();
+            SI->position.y += 0.5;
             break;
 		default:
 			break;

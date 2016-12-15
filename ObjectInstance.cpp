@@ -12,7 +12,6 @@ ObjectInstance::ObjectInstance(Object *object) {
     scale = 1;
     position = {0, 0, 0};
     angle = {0, 0, 0};
-    center();
     visible = true;
     textureLoaded = false;
     lastTex = 0;
@@ -42,7 +41,9 @@ void ObjectInstance::center() {
 
     float length = std::sqrt(std::pow(size.x, 2) + std::pow(size.y, 2) + std::pow(size.z, 2));
 
-    std::cout << length << std::endl;
+    std::cout << "Min: " << min.x << ", " << min.y << ", " << min.z << std::endl;
+    std::cout << "Max: " << max.x << ", " << max.y << ", " << max.z << std::endl;
+    std::cout << "Size: " << size.x << ", " << size.y << ", " << size.z << std::endl;
 
     //Scale the instance to be 2x2x2
     scale = 2 / length;

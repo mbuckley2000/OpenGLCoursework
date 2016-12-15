@@ -12,6 +12,8 @@ class Mesh : public Object {
 public:
     Mesh(const char *path);
 
+    void flip();
+
     void loadFromFile(const char* path);
 };
 

@@ -15,3 +15,11 @@ Mesh::Mesh(const char *path) {
     calculateNormals();
 
 }
+
+void Mesh::flip() {
+    for (glm::vec3 v : vertices) {
+        v = -v;
+    }
+
+    calculateNormals();
+}
