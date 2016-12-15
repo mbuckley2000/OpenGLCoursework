@@ -25,8 +25,8 @@ inline GLuint loadBMP(const char *filename) {
     file = fopen(filename, "rb");
 
     if (file == NULL) return 0;
-    width = 400;
-    height = 300;
+    width = 800;
+    height = 800;
     data = (unsigned char *) malloc(width * height * 3);
     //int size = fseek(file,);
     fread(data, width * height * 3, 1, file);

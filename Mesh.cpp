@@ -10,6 +10,8 @@ void Mesh::loadFromFile(const char *path) {
 }
 
 Mesh::Mesh(const char *path) {
+    vn = 3;
     loadFromFile(path);
     calculateNormals();
+
 }

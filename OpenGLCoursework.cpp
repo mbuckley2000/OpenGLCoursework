@@ -25,10 +25,11 @@ ObjectInstance *bunnyInst;
 ObjectInstance *cubeInstPtr;
 ObjectInstance *SI;
 
-
 PointLight light;
 Camera camera;
 Scene scene;
+
+glm::vec3 rotDir = {0, 0, 0};
 
 // Scene initialisation.
 void InitGL(GLvoid)
@@ -61,13 +62,15 @@ void display(void)
 	glLoadIdentity();
 
     //Rotate light
-    lightAngle += 0.01;
-    cubeInstPtr->angle.x -= 0.1;
-    bunnyInst->angle.y -= 0.1;
-    SI->angle.z -= 0.1;
+    //lightAngle += 0.01;
     light.position.x = 10 * sin(lightAngle);
     light.position.z = 10 * cos(lightAngle);
 
+    cubeInstPtr->angle -= rotDir;
+    bunnyInst->angle -= rotDir;
+    SI->angle -= rotDir;
+
+    //Render our scene
     scene.render();
 
 	glutSwapBuffers();
@@ -103,7 +106,6 @@ void keyboard(unsigned char key, int x, int y)
 		case 27:
 			exit(0);
 			break;
-
         case 'w':
             camera.position += camera.direction * 0.1f;
             break;  // Move forward
@@ -116,6 +118,12 @@ void keyboard(unsigned char key, int x, int y)
         case 'd':
             camera.position -= camera.right * 0.1f;
             break;  // Move right
+        case '=':
+            camera.position -= glm::normalize(glm::cross(camera.right, camera.direction)) * 0.1f;
+            break;  // Move up
+        case '-':
+            camera.position += glm::normalize(glm::cross(camera.right, camera.direction)) * 0.1f;
+            break;  // Move down
         case '1':
             cubeInstPtr->visible = true;
             bunnyInst->visible = false;
@@ -131,14 +139,45 @@ void keyboard(unsigned char key, int x, int y)
             bunnyInst->visible = false;
             SI->visible = true;
             break;
-
+        case 'v':
+            cubeInstPtr->renderMode = 'v';
+            bunnyInst->renderMode = 'v';
+            SI->renderMode = 'v';
+            break;
+        case 'e':
+            cubeInstPtr->renderMode = 'e';
+            bunnyInst->renderMode = 'e';
+            SI->renderMode = 'e';
+            break;
+        case 'f':
+            cubeInstPtr->renderMode = 'f';
+            bunnyInst->renderMode = 'f';
+            SI->renderMode = 'f';
+            break;
+        case 't':
+            cubeInstPtr->textureLoaded = !cubeInstPtr->textureLoaded;
+            break;
+        case 'x':
+            rotDir = {0.1, 0, 0};
+            break;
+        case 'y':
+            rotDir = {0, 0.1, 0};
+            break;
+        case 'z':
+            rotDir = {0, 0, 0.1};
+            break;
+        case 'r':
+            cubeInstPtr->angle = {0, 0, 0};
+            SI->angle = {0, 0, 0};
+            bunnyInst->angle = {0, 0, 0};
+            rotDir = {0, 0, 0};
+            break;
 		default:
 			break;
 	}
 
 	glutPostRedisplay();
 }
-
 
 // Arrow keys need to be handled in a separate function from other keyboard presses.
 void arrow_keys(int a_keys, int x, int y)
@@ -163,6 +202,7 @@ void mouseButton(int button, int state, int x, int y)
 {
 }
 
+
 int oldX = -1, oldY = -1;
 // Handling mouse move events.
 void mouseMove(int x, int y)
@@ -177,11 +217,6 @@ void mouseMove(int x, int y)
     oldX = x;
     oldY = y;
 }
-
-
-// Note: You may wish to add interactivity like clicking and dragging to move the camera.
-//       In that case, please use the above functions.
-
 
 // Entry point to the application.
 int main(int argc, char** argv)
@@ -200,10 +235,8 @@ int main(int argc, char** argv)
     light.colour = {1, 0.5, 0.5};
 
     //Camera
-    camera.center = {0, 0, 0};
     camera.up = {0, 1, 0};
     camera.position = {0, 0, 0};
-
 
     //Bunny
     Mesh bunny = Mesh("/home/matt/ClionProjects/OpenGLCoursework/bunny.obj");
@@ -214,7 +247,6 @@ int main(int argc, char** argv)
     //Screwdriver
     Mesh screwdriver = Mesh("/home/matt/ClionProjects/OpenGLCoursework/screwdriver.obj");
     ObjectInstance screwdriverInst = ObjectInstance(&screwdriver);
-    screwdriverInst.center();
     screwdriverInst.renderMode = 'f';
     SI = &screwdriverInst;
 
@@ -223,8 +255,7 @@ int main(int argc, char** argv)
     ObjectInstance cubeInst = ObjectInstance(&cube);
     cubeInstPtr = &cubeInst;
     cubeInst.renderMode = 'f';
-    cubeInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/cube.bmp");
-
+    cubeInst.loadTexture("/home/matt/ClionProjects/OpenGLCoursework/textures/colors.bmp");
 
     cubeInstPtr->visible = true;
     bunnyInst->visible = false;

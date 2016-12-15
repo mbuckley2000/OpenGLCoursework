@@ -15,11 +15,13 @@
 class Object {
 public:
     double scale;
-    std::vector<std::array<int, 3>> faces;
+    std::vector<std::array<int, 4>> faces;
     std::vector<glm::vec3> vertices;
     Material material;
-    std::vector<glm::vec2> uvs;
+    std::vector<std::array<glm::vec2, 4>> uvs;
     std::vector<glm::vec3> vertexNormals;
+
+    int vn;
 
     void calculateNormals();
 };

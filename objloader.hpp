@@ -12,7 +12,7 @@
 // Originally writen by Yongliang Yang using GLM,
 // modified by Andrew Chinery to use Eigen, and
 // modified by Christian Richardt to use plain C++11.
-inline bool load_obj(const char *path, std::vector<glm::vec3> &vertices, std::vector<std::array<int, 3>> &faces)
+inline bool load_obj(const char *path, std::vector<glm::vec3> &vertices, std::vector<std::array<int, 4>> &faces)
 {
 	printf("Loading OBJ file '%s' ... ", path);
 
@@ -45,7 +45,7 @@ inline bool load_obj(const char *path, std::vector<glm::vec3> &vertices, std::ve
 			vertices.push_back(vertex);
 		} else if (strcmp(lineHeader, "f") == 0) //It's a face
 		{
-            std::array<int, 3> face;
+            std::array<int, 4> face;
             fscanf(file, "%i %i %i\n", &face[0], &face[1], &face[2]);
             face[0]--;
             face[1]--;

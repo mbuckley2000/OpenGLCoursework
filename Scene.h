@@ -18,11 +18,8 @@ public:
     PointLight *light;
     Camera *camera;
 
-    char renderMode;
-
 private:
-    void drawTriangle(int v1, int v2, int v3, ObjectInstance *instance);
-
+    void drawCube(ObjectInstance *instance);
     void drawInstance(ObjectInstance *instance);
 };
 

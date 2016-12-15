@@ -13,7 +13,7 @@ class ObjectInstance {
 public:
     ObjectInstance(Object *object);
 
-    std::vector<GLuint> textures;
+    GLuint texture;
 
     bool textureLoaded;
 

@@ -3,6 +3,7 @@
 //
 
 #include <glm/glm.hpp>
+#include <iostream>
 #include "ObjectInstance.h"
 #include "LoadTexture.h"
 
@@ -21,11 +22,12 @@ ObjectInstance::ObjectInstance(Object *object) {
 
 void ObjectInstance::center() {
     //Find minimum and maximum points of the object
-    glm::vec3 min = {0, 0, 0}, max = {0, 0, 0};
+    glm::vec3 min = {0, 0, 0};
+    glm::vec3 max = {0, 0, 0};
 
-    for (std::array<int, 3> face : object->faces) {
-        for (int i = 0; i < face.size(); i++) {
-            glm::vec3 v = object->vertices[i];
+    for (std::array<int, 4> face : object->faces) {
+        for (int i = 0; i < object->vn; i++) {
+            glm::vec3 v = object->vertices[face[i]];
             if (v.x < min.x) min.x = v.x;
             if (v.y < min.y) min.y = v.y;
             if (v.z < min.z) min.z = v.z;
@@ -38,25 +40,21 @@ void ObjectInstance::center() {
     //Calculate the vector length of the object
     glm::vec3 size = max - min;
 
-    /*
-    float largestAxis = size.x;
-    if (size.y > largestAxis) largestAxis = size.y;
-    if (size.z > largestAxis) largestAxis = size.z;
-*/
-
     float length = std::sqrt(std::pow(size.x, 2) + std::pow(size.y, 2) + std::pow(size.z, 2));
+
+    std::cout << length << std::endl;
 
     //Scale the instance to be 2x2x2
     scale = 2 / length;
 
     //Position the instance to be centered at (0, 0, 0)
-    position = -min * scale;
-    position.x -= 1;
-    position.y -= 1;
-    position.z -= 1;
+    position = -size;
+    position /= 2;
+    position -= min;
+    position *= scale;
 }
 
 void ObjectInstance::loadTexture(const char *filename) {
-    textures.push_back(loadBMP(filename));
+    texture = loadBMP(filename);
     textureLoaded = true;
 }

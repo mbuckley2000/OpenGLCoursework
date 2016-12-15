@@ -12,8 +12,12 @@ void Object::calculateNormals() {
         int faceCount = 0;
 
         //Find all faces which contain this vertex
-        for (std::array<int, 3> face : faces) {
-            if (face[0] == i || face[1] == i || face[2] == i) {
+        for (std::array<int, 4> face : faces) {
+            bool hit = false;
+            for (int j = 0; j < vn; j++) {
+                if (face[j] == i) hit = true;
+            }
+            if (hit) {
                 //Calculate face normal
                 vertNormal += glm::normalize(
                         glm::cross(vertices[face[1]] - vertices[face[0]], vertices[face[2]] - vertices[face[0]]));
